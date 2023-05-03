@@ -54,6 +54,7 @@ THIRD_PARTY_APPS = [
 
 MY_APPS = [
     "user",
+    "cart"
 ]
 
 
