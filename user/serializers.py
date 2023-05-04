@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from address.models import Address
+
+from address.serializers import AddressSerializer
 from .models import RatingChoices, User
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.hashers import make_password
 
 
 class UserSerializer(serializers.ModelSerializer):
