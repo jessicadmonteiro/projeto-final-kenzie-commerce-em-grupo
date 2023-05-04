@@ -1,8 +1,10 @@
 from django.db import models
+from user.models import User
+from products.models import Product
 
 
 class Cart(models.Model):
-    products_list = models.CharField()
-    seller_list = models.CharField()
-    total = models.DecimalField(max_digits=7, decimal_places=2)
-    user = models.OneToOneField("user.User", on_delete=models.CASCADE, related_name="cart")
+    products_list = models.ManyToManyField(Product, blank=True)
+    seller_list = models.IntegerField()
+    total = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)

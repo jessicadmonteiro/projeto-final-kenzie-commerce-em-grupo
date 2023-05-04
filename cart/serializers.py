@@ -11,3 +11,4 @@ class CartSerializer(serializers.ModelSerializer):
             "seller_list",
             "total",
         ]
+        extra_kwargs = {"seller_list": {"many": True}}
