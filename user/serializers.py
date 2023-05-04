@@ -1,8 +1,13 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from .models import RatingChoices, User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import make_password
+
 
 class UserSerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
+
     email = serializers.EmailField(
         validators=[
             UniqueValidator(
@@ -25,16 +30,23 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "type_user",
-            # "is_admin"
+            "address",
         ]
 
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data: dict) -> User:
+
+        address_data = validated_data.pop("address")
+        address = Address.objects.create(**address_data)
+
         is_admin = validated_data.pop("is_admin")
+
         if is_admin:
-            return User.objects.create_superuser(**validated_data)
-        return User.objects.create_user(**validated_data)
+            return User.objects.create_superuser(**validated_data, address=address)
+
+        return User.objects.create_user(**validated_data, address=address)
+
 
 class UserAdmSerializer(serializers.ModelSerializer):
-    is_admin = serializers.BooleanField(default=False)
+    is_admin = serializers.BooleanField()
