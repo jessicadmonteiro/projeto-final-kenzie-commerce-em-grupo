@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from .models import RatingChoices, User
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.hashers import make_password
-
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -40,4 +37,4 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 class UserAdmSerializer(serializers.ModelSerializer):
-    is_admin = serializers.BooleanField()
+    is_admin = serializers.BooleanField(default=False)
