@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from .models import Product, ProductStatus
+from user.serializers import UserSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
