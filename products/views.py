@@ -1,14 +1,15 @@
 from django.shortcuts import render
 from .models import Product
 from .serializers import ProductSerializer
-from rest_framework.generics import ListCreateAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from user.permissions import UserAuth, UserAuthenticate
+from products.permissions import IsAuthenticatedOrReadOnly
 
 
 class ProductView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [UserAuthenticate]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     serializer_class = ProductSerializer
 
     def get_queryset(self):
@@ -25,3 +26,11 @@ class ProductView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class UpdateProduct(UpdateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
