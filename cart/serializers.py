@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from .models import Cart
+from products.serializers import ProductSerializer
 
 
 class CartSerializer(serializers.ModelSerializer):
+    products_list = ProductSerializer(many=True)
 
     class Meta:
         model = Cart
@@ -11,4 +13,5 @@ class CartSerializer(serializers.ModelSerializer):
             "seller_list",
             "total",
         ]
-        extra_kwargs = {"seller_list": {"many": True}}
+
+   

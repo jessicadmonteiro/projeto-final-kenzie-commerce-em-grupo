@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from address.models import Address
+from cart.models import Cart
 
 from address.serializers import AddressSerializer
 from .models import RatingChoices, User
@@ -43,9 +44,13 @@ class UserSerializer(serializers.ModelSerializer):
         is_admin = validated_data.pop("is_admin")
 
         if is_admin:
-            return User.objects.create_superuser(**validated_data, address=address)
+            user = User.objects.create_superuser(**validated_data, address=address)
+        else:
+            user = User.objects.create_user(**validated_data, address=address)
 
-        return User.objects.create_user(**validated_data, address=address)
+        Cart.objects.create(user=user)
+
+        return user
 
     def update(self, instance, validated_data):
         instance.username = validated_data.get("username", instance.username)
