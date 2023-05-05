@@ -37,7 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data: dict) -> User:
-
         address_data = validated_data.pop("address")
         address = Address.objects.create(**address_data)
 
@@ -47,6 +46,18 @@ class UserSerializer(serializers.ModelSerializer):
             return User.objects.create_superuser(**validated_data, address=address)
 
         return User.objects.create_user(**validated_data, address=address)
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get("username", instance.username)
+        instance.email = validated_data.get("email", instance.email)
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.type_user = validated_data.get("type_user", instance.type_user)
+        password = validated_data.get("password", None)
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
 
 
 class UserAdmSerializer(serializers.ModelSerializer):
