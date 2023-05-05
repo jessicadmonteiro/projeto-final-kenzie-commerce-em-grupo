@@ -4,8 +4,8 @@ from address.models import Address
 
 
 class RatingChoices(models.TextChoices):
-    seller = "seller",
-    client = "client"
+    seller = "vendedor",
+    client = "cliente"
 
 
 class User(AbstractUser):
