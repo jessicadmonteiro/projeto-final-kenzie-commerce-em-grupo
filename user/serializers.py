@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from .models import RatingChoices, User
-from address.serializers import AddressSerializer
 from address.models import Address
+
+from address.serializers import AddressSerializer
+from .models import RatingChoices, User
 
 
 class UserSerializer(serializers.ModelSerializer):
