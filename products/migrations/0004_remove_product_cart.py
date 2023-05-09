@@ -2,8 +2,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
-  dependencies = [
+    dependencies = [
         ("products", "0003_product_cart"),
     ]
 
