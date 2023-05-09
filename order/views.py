@@ -8,7 +8,7 @@ from cart.models import Cart
 from user.models import User
 from products.models import Product
 from .serializers import OrderSerializer
-from cart.serializers import CartSerializer 
+from cart.serializers import CartSerializer
 from rest_framework.generics import ListCreateAPIView
 
 
@@ -21,13 +21,18 @@ class OrderView(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         cart = request.user.cart
+        email = request.user.email
         products = cart.products_list.all()
         sellers = cart.seller_list.all()
 
         for seller in sellers:
             seller = seller.id
-            create_order = Order.objects.create(user=self.request.user, seller_id=seller)
-            seller_products = [product for product in products if product.user.id == seller]
+            create_order = Order.objects.create(
+                user=self.request.user, seller_id=seller
+            )
+            seller_products = [
+                product for product in products if product.user.id == seller
+            ]
             create_order.products.set(seller_products)
             create_order.save()
 
@@ -43,7 +48,9 @@ class OrderView(ListCreateAPIView):
         for product in products:
             product = Product.objects.get(id=product.id)
             if product.stock == 0:
-                return Response({"message": f"O produto {product.name} não está disponível "})
+                return Response(
+                    {"message": f"O produto {product.name} não está disponível "}
+                )
             product.stock -= 1
 
             if product.stock == 0:
@@ -51,7 +58,8 @@ class OrderView(ListCreateAPIView):
             product.save()
             print(product.stock)
 
+            if product:
+                emailUser = User.objects.get(email=email)
+                serializer = OrderSerializer(emailUser)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
