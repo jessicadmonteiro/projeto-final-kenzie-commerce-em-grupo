@@ -6,11 +6,17 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from products.models import Product
 from django.shortcuts import get_object_or_404
-from .models import User
+from drf_spectacular.utils import extend_schema
 
-
+@extend_schema(tags = ["Cart"])
 class CartView(ListAPIView):
     authentication_classes = [JWTAuthentication]
+
+    @extend_schema(
+            summary = "Read cart"
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     serializer_class = CartSerializer
 
@@ -29,9 +35,13 @@ class CartView(ListAPIView):
         return [cart]
 
 
+@extend_schema(tags = ["Cart"])
 class CartAddProductView(APIView):
     authentication_classes = [JWTAuthentication]
 
+    @extend_schema(
+            summary = "Add product to cart"
+    )
     def post(self, request, pk):
         product = get_object_or_404(Product, id=pk)
         cart = request.user.cart
