@@ -1,20 +1,30 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework.views import APIView, Response, status
+from rest_framework.views import Response, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from products.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 from .models import Order
-from cart.models import Cart
 from user.models import User
 from products.models import Product
 from .serializers import OrderSerializer
-from cart.serializers import CartSerializer
+from cart.serializers import CartSerializer 
 from rest_framework.generics import ListCreateAPIView
+from drf_spectacular.utils import extend_schema
 
-
+@extend_schema(tags = ["Order"])
 class OrderView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+            summary = " Order creation"
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+    
+    @extend_schema(
+            summary = "Read order"
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
