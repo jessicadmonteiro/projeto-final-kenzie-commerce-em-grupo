@@ -18,5 +18,3 @@ class Product(models.Model):
     user = models.ForeignKey(
         "user.User", on_delete=models.CASCADE, related_name="products"
     )
-
-    cart = models.ManyToManyField("cart.Cart", related_name="cart_products")
