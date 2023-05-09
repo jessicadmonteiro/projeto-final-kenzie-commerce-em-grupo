@@ -8,5 +8,5 @@ class IsAuthenticatedOrReadOnly(BasePermission):
             return True
         if not request.user.is_authenticated:
             return False
-        if request.user.type_user == "seller":
+        if request.user.type_user == "vendedor":
             return True
