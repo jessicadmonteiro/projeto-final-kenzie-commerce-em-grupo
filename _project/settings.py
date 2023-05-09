@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 import os
 import dotenv
+import dj_database_url
 
 dotenv.load_dotenv()
 
@@ -33,6 +34,15 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+RAILWAY_STATIC_URL = os.getenv("RAILWAY_STATIC_URL")
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS += [RENDER_EXTERNAL_HOSTNAME, "0.0.0.0"]
+
+if RAILWAY_STATIC_URL:
+    ALLOWED_HOSTS += [RAILWAY_STATIC_URL, "0.0.0.0"]
 
 
 # Application definition
@@ -47,15 +57,14 @@ DJANGO_APPS = [
 ]
 
 
-THIRD_PARTY_APPS = [
-    "rest_framework",
-]
+THIRD_PARTY_APPS = ["rest_framework", "drf_spectacular"]
 
 MY_APPS = [
     "products",
     "user",
     "address",
     "cart",
+    "order"
 ]
 
 
@@ -69,6 +78,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "_project.urls"
@@ -119,6 +129,8 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -142,6 +154,12 @@ AUTH_PASSWORD_VALIDATORS = [
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "PAGE_SIZE": 2,
 }
 
 
@@ -168,3 +186,11 @@ STATIC_URL = "static/"
 AUTH_USER_MODEL = "user.User"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Kenzie Commerce",
+    "DESCRIPTION": "projeto final",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}

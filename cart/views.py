@@ -48,6 +48,7 @@ class CartAddProductView(APIView):
             total_price += product["price"]
 
         cart.total = total_price
+        cart.save()
 
         serializer_cart = CartSerializer(cart)
 
