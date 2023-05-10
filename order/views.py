@@ -74,9 +74,15 @@ class OrderView(ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(tags=["Order"])
+@extend_schema(methods=["PUT"], exclude=True)
 class updateStatusOrderView(UpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(summary=" UpdateOrder creation")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
