@@ -12,6 +12,8 @@ class OrderProductsSerializer(serializers.Serializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    products = OrderProductsSerializer(many=True)
+
     class Meta:
         model = Order
         fields = [

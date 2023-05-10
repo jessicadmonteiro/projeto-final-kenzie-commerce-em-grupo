@@ -1,4 +1,3 @@
-from .models import Cart
 from rest_framework.response import Response
 from .serializers import CartSerializer
 from rest_framework.generics import ListAPIView
@@ -6,7 +5,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from products.models import Product
 from django.shortcuts import get_object_or_404
-from .models import User
 
 
 class CartView(ListAPIView):
