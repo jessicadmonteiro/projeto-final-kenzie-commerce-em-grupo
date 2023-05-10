@@ -5,10 +5,11 @@ from .models import Order
 from user.models import User
 from products.models import Product
 from .serializers import OrderSerializer
-from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView, ListAPIView
 from django.core.mail import send_mail
 from django.conf import settings
 from drf_spectacular.utils import extend_schema
+from .permissions import sellersPermissions
 
 
 @extend_schema(tags=["Order"])
@@ -24,8 +25,13 @@ class OrderView(ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        user_orders = user.orders.all()
+
+        return user_orders
 
     def create(self, request, *args, **kwargs):
         cart = request.user.cart
@@ -92,3 +98,17 @@ class updateStatusOrderView(UpdateAPIView):
 
         instance.save()
         return super().update(request, *args, **kwargs)
+
+
+class retrieveSellerOrders(ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [sellersPermissions]
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        seller = Order.objects.filter(seller=user.id)
+
+        return seller
