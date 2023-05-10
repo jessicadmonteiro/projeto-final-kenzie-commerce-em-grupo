@@ -59,12 +59,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = ["rest_framework", "drf_spectacular"]
 
-MY_APPS = [
-    "products",
-    "user",
-    "address",
-    "cart",
-]
+MY_APPS = ["products", "user", "address", "cart", "order"]
 
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
@@ -114,6 +109,13 @@ DATABASES = {
         "PORT": os.getenv("POSTGRES_DB_PORT"),
     }
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -189,7 +191,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Kenzie Commerce",
-    "DESCRIPTION": "projeto final",
+    "DESCRIPTION": "Final project",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

@@ -13,5 +13,3 @@ class CartSerializer(serializers.ModelSerializer):
             "seller_list",
             "total",
         ]
-
-   
