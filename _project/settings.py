@@ -191,7 +191,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Kenzie Commerce",
-    "DESCRIPTION": "projeto final",
+    "DESCRIPTION": "Final project",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }

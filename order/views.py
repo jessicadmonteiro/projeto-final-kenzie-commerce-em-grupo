@@ -8,17 +8,28 @@ from .serializers import OrderSerializer
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from django.core.mail import send_mail
 from django.conf import settings
+from drf_spectacular.utils import extend_schema
 
 
+@extend_schema(tags=["Order"])
 class OrderView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    @extend_schema(summary=" Order creation")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    @extend_schema(summary="Read order")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
     def create(self, request, *args, **kwargs):
         cart = request.user.cart
+        email = request.user.email
         products = cart.products_list.all()
         sellers = cart.seller_list.all()
 
