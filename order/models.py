@@ -6,8 +6,8 @@ from user.models import User
 
 
 class StatusChoides(models.TextChoices):
-    realizado = ("realizado",)
-    andamento = ("andamento",)
+    realizado = "realizado"
+    andamento = "andamento"
     entregue = "entregue"
 
 

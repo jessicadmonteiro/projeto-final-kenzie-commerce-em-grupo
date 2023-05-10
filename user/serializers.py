@@ -43,7 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         is_admin = validated_data.pop("is_admin")
 
-        if is_admin:
+        if is_admin and validated_data["type_user"] != "cliente":
             user = User.objects.create_superuser(**validated_data, address=address)
         else:
             user = User.objects.create_user(**validated_data, address=address)

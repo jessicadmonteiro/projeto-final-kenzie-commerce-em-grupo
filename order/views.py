@@ -5,24 +5,22 @@ from .models import Order
 from user.models import User
 from products.models import Product
 from .serializers import OrderSerializer
-from cart.serializers import CartSerializer 
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from django.core.mail import send_mail
+from django.conf import settings
 from drf_spectacular.utils import extend_schema
 
-@extend_schema(tags = ["Order"])
+
+@extend_schema(tags=["Order"])
 class OrderView(ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(
-            summary = " Order creation"
-    )
+    @extend_schema(summary=" Order creation")
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
-    
-    @extend_schema(
-            summary = "Read order"
-    )
+
+    @extend_schema(summary="Read order")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -66,10 +64,31 @@ class OrderView(ListCreateAPIView):
             if product.stock == 0:
                 product.status = "indisponivel"
             product.save()
-            print(product.stock)
-
-            if product:
-                emailUser = User.objects.get(email=email)
-                serializer = OrderSerializer(emailUser)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class updateStatusOrderView(UpdateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def update(self, request, *args, **kwargs):
+        instance = Order.objects.get(id=kwargs["pk"])
+        status = request.data["status"]
+        if status == "realizado" or status == "andamento" or status == "entregue":
+            instance.status = status
+            send_mail(
+                subject="Atualização do pedido!",
+                message=f"O status do seu pedido foi atualizado para {instance.status}.",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[request.user.email],
+                fail_silently=False,
+            )
+        else:
+            return Response({"status": f"{status} não é uma escolha valida."})
+
+        instance.save()
+        return super().update(request, *args, **kwargs)
